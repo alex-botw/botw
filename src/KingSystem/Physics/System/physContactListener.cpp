@@ -56,24 +56,24 @@ void ContactListener::clearTable() {
 }
 
 void ContactListener::collisionAddedCallback(const hkpCollisionEvent& event) {
-    auto* bodyA = getRigidBody(event.getBody(0));
-    auto* bodyB = getRigidBody(event.getBody(1));
+    auto* bodyA = getRigidBody(*event.getBody(0));
+    auto* bodyB = getRigidBody(*event.getBody(1));
     handleCollisionAdded(event, bodyA, bodyB);
     bodyA->onCollisionAdded();
     bodyB->onCollisionAdded();
 }
 
 void ContactListener::collisionRemovedCallback(const hkpCollisionEvent& event) {
-    auto* bodyA = getRigidBody(event.getBody(0));
-    auto* bodyB = getRigidBody(event.getBody(1));
+    auto* bodyA = getRigidBody(*event.getBody(0));
+    auto* bodyB = getRigidBody(*event.getBody(1));
     handleCollisionRemoved(event, bodyA, bodyB);
     bodyA->onCollisionRemoved();
     bodyB->onCollisionRemoved();
 }
 
 void ContactListener::contactPointCallback(const hkpContactPointEvent& event) {
-    RigidBody* body_a = getRigidBody(event.getBody(0));
-    RigidBody* body_b = getRigidBody(event.getBody(1));
+    RigidBody* body_a = getRigidBody(*event.getBody(0));
+    RigidBody* body_b = getRigidBody(*event.getBody(1));
 
     if (event.m_contactPoint->getPosition().getInt24W() == hkpCharacterRigidBody::m_magicNumber) {
         const auto layer_a = body_a->getContactLayer();
@@ -226,8 +226,8 @@ int ContactListener::notifyContactPointInfo(RigidBody* body_a, RigidBody* body_b
 
     int result = 1;
 
-    if (info_b && info_b->isLayerSubscribed(layer_a) && (info_b->get30() == 0 || distance <= 0.0) &&
-        (info_b->get34() == 0 || !contact_disabled)) {
+    if (info_b && info_b->isLayerSubscribed(layer_a) &&
+        info_b->testContactPointDistance(distance) && (info_b->get34() == 0 || !contact_disabled)) {
         if (should_notify) {
             point.body_a = body_b;
             point.body_b = body_a;
@@ -250,8 +250,8 @@ int ContactListener::notifyContactPointInfo(RigidBody* body_a, RigidBody* body_b
             clearCallbackDelay(event);
     }
 
-    if (info_a && info_a->isLayerSubscribed(layer_b) && (info_a->get30() == 0 || distance <= 0.0) &&
-        (info_a->get34() == 0 || !contact_disabled)) {
+    if (info_a && info_a->isLayerSubscribed(layer_b) &&
+        info_a->testContactPointDistance(distance) && (info_a->get34() == 0 || !contact_disabled)) {
         if (should_notify) {
             point.body_a = body_a;
             point.body_b = body_b;
@@ -293,7 +293,7 @@ void ContactListener::notifyLayerContactPointInfo(const TrackedContactPointLayer
         return;
 
     const hkReal distance = event.m_contactPoint->getDistance();
-    if (!(tracked_layer.info->get30() == 0 || distance <= 0.0))
+    if (!tracked_layer.info->testContactPointDistance(distance))
         return;
 
     if (tracked_layer.info->get34() != 0 && isContactDisabled(event))
@@ -368,7 +368,7 @@ void ContactListener::handleCollisionAdded(const hkpCollisionEvent& event, Rigid
     const auto j = int(layer_b - mLayerBase);
     if (areContactsTrackedForLayerPair(i, j)) {
         auto* layer_col_info = getContactLayerCollisionInfo(i, j);
-        if (body_a->isFlag8Set() && body_b->isFlag8Set()) {
+        if (body_a->isAddedToWorld() && body_b->isAddedToWorld()) {
             const auto layer_a_ = int(layer_a);
             const auto tracked_layer = layer_col_info->getLayer();
             const bool body_a_first = layer_a_ == tracked_layer;

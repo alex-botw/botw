@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/open-ead/sead
+	branch = master
+	commit = 14326b3504f5b3909e4482820ca16a6071f3eb5e
+	parent = 0197ca3aba7ac2d26b978258ac5615fd35bfcd25
+	method = merge
+	cmdver = 0.4.3

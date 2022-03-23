@@ -12,6 +12,8 @@
 #include <prim/seadSafeString.h>
 #include <thread/seadAtomic.h>
 #include "KingSystem/Physics/RigidBody/physRigidBody.h"
+#include "KingSystem/Physics/physDefines.h"
+#include "KingSystem/Physics/physLayerMaskBuilder.h"
 #include "KingSystem/Utils/Types.h"
 
 namespace ksys::phys {
@@ -31,22 +33,34 @@ public:
     u32 get30() const { return _30; }
     void set30(u32 value) { _30 = value; }
 
+    // TODO: rename
+    bool testContactPointDistance(float distance) const { return get30() == 0 || distance <= 0; }
+
     u32 get34() const { return _34; }
     void set34(u32 value) { _34 = value; }
 
     bool isLayerSubscribed(ContactLayer layer) const {
         const auto type = getContactLayerType(layer);
-        return mSubscribedLayers[int(type)].isOnBit(int(getContactLayerBaseRelativeValue(layer)));
+        return mSubscribedLayers[int(type)].isOnBit(getContactLayerBaseRelativeValue(layer));
     }
 
     // TODO: rename
     bool isLayerInMask2(ContactLayer layer) const {
         const auto type = getContactLayerType(layer);
-        return mLayerMask2[int(type)].isOnBit(int(getContactLayerBaseRelativeValue(layer)));
+        return mLayerMask2[int(type)].isOnBit(getContactLayerBaseRelativeValue(layer));
+    }
+
+    void setLayerMasks(const LayerMaskBuilder& builder) {
+        for (int i = 0; i < NumContactLayerTypes; ++i) {
+            mSubscribedLayers[i] = builder.getMasks()[i].layers;
+            mLayerMask2[i] = builder.getMasks()[i].layers2;
+        }
     }
 
 public:
     // For internal use by the physics system.
+
+    sead::Atomic<int>& getNumContactPoints() { return mNumContactPoints; }
 
     bool isLinked() const { return mListNode.isLinked(); }
 

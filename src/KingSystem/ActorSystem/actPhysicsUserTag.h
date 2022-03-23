@@ -18,13 +18,15 @@ public:
     Actor* getActor(ActorLinkConstDataAccess* accessor, Actor* other_actor) const;
     bool acquireActor(ActorLinkConstDataAccess* accessor) const;
 
+    Actor* getActor() const { return mActor; }
+
     void onMaxPositionExceeded(phys::RigidBody* body) override;
     void m3(void* a, void* b, float c) override;
     void onBodyShapeChanged(phys::RigidBody* body) override;
     void m5() override;
     const sead::SafeString& getName() const override;
     void m7(phys::RigidBody* rigid_body, int a) override;
-    const sead::SafeString& getName2() const override;
+    const sead::SafeString& getName(phys::RigidBody* rigid_body) const override;
 
 private:
     Actor* mActor = nullptr;

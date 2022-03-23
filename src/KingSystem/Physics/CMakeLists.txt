@@ -92,10 +92,14 @@ target_sources(uking PRIVATE
   StaticCompound/physStaticCompound.cpp
   StaticCompound/physStaticCompound.h
   StaticCompound/physStaticCompoundAutogen.cpp
-  StaticCompound/physStaticCompoundBodyGroup.cpp
-  StaticCompound/physStaticCompoundBodyGroup.h
   StaticCompound/physStaticCompoundInfo.cpp
   StaticCompound/physStaticCompoundInfo.h
+  StaticCompound/physStaticCompoundMgr.cpp
+  StaticCompound/physStaticCompoundMgr.h
+  StaticCompound/physStaticCompoundRigidBodyGroup.cpp
+  StaticCompound/physStaticCompoundRigidBodyGroup.h
+  StaticCompound/physStaticCompoundUtil.cpp
+  StaticCompound/physStaticCompoundUtil.h
 
   SupportBone/physSupportBoneParam.cpp
   SupportBone/physSupportBoneParam.h
@@ -137,12 +141,26 @@ target_sources(uking PRIVATE
   System/physMaterialTable.h
   System/physParamSet.cpp
   System/physParamSet.h
+  System/physPhantom.cpp
+  System/physPhantom.h
   System/physQueryContactPointInfo.cpp
   System/physQueryContactPointInfo.h
+  System/physRayCast.cpp
+  System/physRayCast.h
+  System/physRayCastBodyQuery.cpp
+  System/physRayCastBodyQuery.h
+  System/physRayCastForRequest.cpp
+  System/physRayCastForRequest.h
+  System/physRayCastRequestMgr.cpp
+  System/physRayCastRequestMgr.h
   System/physSensorContactListener.cpp
   System/physSensorContactListener.h
   System/physSensorGroupFilter.cpp
   System/physSensorGroupFilter.h
+  System/physShapeCast.cpp
+  System/physShapeCast.h
+  System/physShapeCastWithInfo.cpp
+  System/physShapeCastWithInfo.h
   System/physSystem.cpp
   System/physSystem.h
   System/physSystemData.cpp

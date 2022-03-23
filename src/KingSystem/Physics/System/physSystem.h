@@ -7,18 +7,22 @@
 #include "KingSystem/Physics/physDefines.h"
 #include "KingSystem/Utils/Types.h"
 
+class hkpWorld;
+
 namespace ksys::phys {
 
 class CollisionInfo;
 class ContactLayerCollisionInfo;
 class ContactLayerCollisionInfoGroup;
 class ContactMgr;
+class ContactPointInfo;
 class GroupFilter;
+class LayerContactPointInfo;
 class MaterialTable;
+class RayCastForRequest;
 class RigidBody;
 class RigidBodyRequestMgr;
-class ContactPointInfo;
-class LayerContactPointInfo;
+class StaticCompoundMgr;
 class SystemData;
 class SystemGroupHandler;
 
@@ -27,10 +31,8 @@ enum class IsIndoorStage {
     Yes,
 };
 
-enum class LowPriority : bool {
-    Yes = true,
-    No = false,
-};
+enum class LowPriority : bool { Yes = true, No = false };
+enum class OnlyLockIfNeeded : bool { Yes = true, No = false };
 
 class System {
     SEAD_SINGLETON_DISPOSER(System)
@@ -40,8 +42,8 @@ class System {
 public:
     float get64() const { return _64; }
     float getTimeFactor() const { return mTimeFactor; }
-    GroupFilter* getGroupFilter(ContactLayerType type) const;
     ContactMgr* getContactMgr() const { return mContactMgr; }
+    StaticCompoundMgr* getStaticCompoundMgr() const { return mStaticCompoundMgr; }
     RigidBodyRequestMgr* getRigidBodyRequestMgr() const { return mRigidBodyRequestMgr; }
     SystemData* getSystemData() const { return mSystemData; }
     MaterialTable* getMaterialTable() const { return mMaterialTable; }
@@ -83,16 +85,42 @@ public:
     // 0x0000007101216a20
     void removeRigidBodyFromContactSystem(RigidBody* body);
 
+    // 0x000000710121686c
+    SystemGroupHandler* addSystemGroupHandler(ContactLayerType layer_type, int free_list_idx = 0);
+    // 0x0000007101215b68
     void removeSystemGroupHandler(SystemGroupHandler* handler);
 
-    void lockWorld(ContactLayerType type, void* a = nullptr, int b = 0, bool c = false);
-    void unlockWorld(ContactLayerType type, void* a = nullptr, int b = 0, bool c = false);
+    hkpWorld* getHavokWorld(ContactLayerType type) const;
+
+    // 0x0000007101215754
+    void lockWorld(ContactLayerType type, const char* description = nullptr, int b = 0,
+                   OnlyLockIfNeeded only_lock_if_needed = OnlyLockIfNeeded::No);
+    // 0x0000007101215784
+    void unlockWorld(ContactLayerType type, const char* description = nullptr, int b = 0,
+                     OnlyLockIfNeeded only_lock_if_needed = OnlyLockIfNeeded::No);
+
+    // 0x0000007101216ac8
+    GroupFilter* getGroupFilter(ContactLayerType type) const;
+
+    // 0x0000007101216ae8
+    RayCastForRequest* allocRayCastRequest(SystemGroupHandler* group_handler = nullptr,
+                                           GroundHit ground_hit = GroundHit::HitAll);
 
     // TODO: rename
     // 0x0000007101216c60
     void setEntityContactListenerField90(bool value);
     // 0x0000007101216c74
     bool getEntityContactListenerField90() const;
+
+    // 0x0000007101216800
+    void setEntityContactListenerField91(bool value);
+    // 0x0000007101216814
+    bool getEntityContactListenerField91() const;
+
+    // 0x000000710121682c
+    void incrementWorldUnkCounter(ContactLayerType layer_type);
+    // 0x000000710121684c
+    void decrementWorldUnkCounter(ContactLayerType layer_type);
 
     // 0x0000007101216cec
     sead::Heap* getPhysicsTempHeap(LowPriority low_priority) const;
@@ -115,7 +143,7 @@ private:
     sead::FixedPtrArray<void*, 2> _128;
     ContactMgr* mContactMgr;
     void* _150;
-    void* _158;
+    StaticCompoundMgr* mStaticCompoundMgr;
     RigidBodyRequestMgr* mRigidBodyRequestMgr;
     void* _168;
     void* mRigidBodyDividedMeshShapeMgr;
@@ -132,5 +160,28 @@ private:
     u8 _1c8[0x480 - 0x1c8];
 };
 KSYS_CHECK_SIZE_NX150(System, 0x480);
+
+class ScopedWorldLock {
+public:
+    explicit ScopedWorldLock(ContactLayerType type, const char* description = nullptr, int unk = 0,
+                             OnlyLockIfNeeded only_lock_if_needed = OnlyLockIfNeeded::No)
+        : mType(type), mDescription(description), mUnk(unk),
+          mOnlyLockIfNeeded(only_lock_if_needed) {
+        System::instance()->lockWorld(mType, mDescription, mUnk, mOnlyLockIfNeeded);
+    }
+
+    ~ScopedWorldLock() {
+        System::instance()->unlockWorld(mType, mDescription, mUnk, mOnlyLockIfNeeded);
+    }
+
+    ScopedWorldLock(const ScopedWorldLock&) = delete;
+    auto operator=(const ScopedWorldLock&) = delete;
+
+private:
+    ContactLayerType mType;
+    const char* mDescription;
+    int mUnk;
+    OnlyLockIfNeeded mOnlyLockIfNeeded;
+};
 
 }  // namespace ksys::phys

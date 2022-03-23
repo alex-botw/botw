@@ -89,10 +89,13 @@ add_library(hkStubs OBJECT
 
   Havok/Physics2012/Collide/Agent/hkpCollisionInput.h
   Havok/Physics2012/Collide/Agent/hkpCollisionQualityInfo.h
+  Havok/Physics2012/Collide/Agent/hkpProcessCollisionInput.h
   Havok/Physics2012/Collide/Agent/Collidable/hkpCdBody.h
+  Havok/Physics2012/Collide/Agent/Collidable/hkpCdPoint.h
   Havok/Physics2012/Collide/Agent/Collidable/hkpCollidable.h
   Havok/Physics2012/Collide/Agent/Collidable/hkpCollidableQualityType.h
   Havok/Physics2012/Collide/Agent/ContactMgr/hkpContactMgr.h
+  Havok/Physics2012/Collide/Agent/Query/hkpCdBodyPairCollector.h
   Havok/Physics2012/Collide/Agent/Query/hkpCdPointCollector.h
   Havok/Physics2012/Collide/Agent3/BvTree3/hkpBvTreeAgent3.h
   Havok/Physics2012/Collide/Agent3/Machine/Nn/hkpAgentNnTrack.h
@@ -100,6 +103,7 @@ add_library(hkStubs OBJECT
   Havok/Physics2012/Collide/BroadPhase/hkpBroadPhaseHandle.h
   Havok/Physics2012/Collide/BroadPhase/hkpTypedBroadPhaseHandle.h
   Havok/Physics2012/Collide/Dispatch/hkpCollisionDispatcher.h
+  Havok/Physics2012/Collide/Dispatch/BroadPhase/hkpBroadPhaseListener.h
   Havok/Physics2012/Collide/Dispatch/ContactMgr/hkpContactMgrFactory.h
   Havok/Physics2012/Collide/Filter/hkpCollidableCollidableFilter.h
   Havok/Physics2012/Collide/Filter/hkpCollisionFilter.cpp
@@ -110,7 +114,12 @@ add_library(hkStubs OBJECT
   Havok/Physics2012/Collide/Filter/Group/hkpGroupFilter.cpp
   Havok/Physics2012/Collide/Filter/Group/hkpGroupFilter.h
   Havok/Physics2012/Collide/Query/hkpRayHitCollector.h
+  Havok/Physics2012/Collide/Query/CastUtil/hkpLinearCastInput.h
   Havok/Physics2012/Collide/Query/CastUtil/hkpWorldRayCastInput.h
+  Havok/Physics2012/Collide/Query/CastUtil/hkpWorldRayCastOutput.h
+  Havok/Physics2012/Collide/Query/Collector/PointCollector/hkpAllCdPointCollector.h
+  Havok/Physics2012/Collide/Query/Collector/PointCollector/hkpClosestCdPointCollector.h
+  Havok/Physics2012/Collide/Query/Collector/PointCollector/hkpRootCdPoint.h
   Havok/Physics2012/Collide/Shape/hkpShape.h
   Havok/Physics2012/Collide/Shape/hkpShapeBase.h
   Havok/Physics2012/Collide/Shape/hkpShapeBuffer.h
@@ -127,9 +136,12 @@ add_library(hkStubs OBJECT
   Havok/Physics2012/Collide/Shape/Convex/ConvexVertices/hkpConvexVerticesShape.h
   Havok/Physics2012/Collide/Shape/Convex/Cylinder/hkpCylinderShape.h
   Havok/Physics2012/Collide/Shape/Convex/Sphere/hkpSphereShape.h
+  Havok/Physics2012/Collide/Shape/Convex/Triangle/hkpTriangleShape.h
   Havok/Physics2012/Collide/Shape/HeightField/hkpHeightFieldShape.h
   Havok/Physics2012/Collide/Shape/HeightField/hkpSphereRepShape.h
   Havok/Physics2012/Collide/Shape/HeightField/Plane/hkpPlaneShape.h
+  Havok/Physics2012/Collide/Shape/HeightField/SampledHeightField/hkpSampledHeightFieldBaseCinfo.h
+  Havok/Physics2012/Collide/Shape/HeightField/SampledHeightField/hkpSampledHeightFieldShape.h
   Havok/Physics2012/Collide/Shape/Query/hkpRayShapeCollectionFilter.h
   Havok/Physics2012/Collide/Shape/Query/hkpShapeRayCastCollectorOutput.h
   Havok/Physics2012/Collide/Shape/Query/hkpShapeRayCastInput.h
@@ -161,7 +173,15 @@ add_library(hkStubs OBJECT
   Havok/Physics2012/Dynamics/Motion/Rigid/hkpFixedRigidMotion.h
   Havok/Physics2012/Dynamics/Motion/Rigid/hkpKeyframedRigidMotion.h
   Havok/Physics2012/Dynamics/Motion/Rigid/hkpSphereMotion.h
+  Havok/Physics2012/Dynamics/Phantom/hkpAabbPhantom.h
+  Havok/Physics2012/Dynamics/Phantom/hkpCachingShapePhantom.h
+  Havok/Physics2012/Dynamics/Phantom/hkpPhantom.h
+  Havok/Physics2012/Dynamics/Phantom/hkpPhantomBroadPhaseListener.h
+  Havok/Physics2012/Dynamics/Phantom/hkpPhantomListener.h
   Havok/Physics2012/Dynamics/Phantom/hkpPhantomOverlapListener.h
+  Havok/Physics2012/Dynamics/Phantom/hkpPhantomType.h
+  Havok/Physics2012/Dynamics/Phantom/hkpShapePhantom.h
+  Havok/Physics2012/Dynamics/Phantom/hkpSimpleShapePhantom.h
   Havok/Physics2012/Dynamics/World/hkpPhysicsSystem.h
   Havok/Physics2012/Dynamics/World/hkpSimulationIsland.h
   Havok/Physics2012/Dynamics/World/hkpWorld.h
@@ -181,10 +201,14 @@ add_library(hkStubs OBJECT
   Havok/Physics2012/Dynamics/World/Simulation/hkpSimulation.h
   Havok/Physics2012/Dynamics/World/Util/hkpWorldConstraintUtil.h
 
+  Havok/Physics2012/Internal/Collide/BvCompressedMesh/hkpBvCompressedMeshShape.h
   Havok/Physics2012/Internal/Collide/Mopp/Code/hkpMoppCode.h
+  Havok/Physics2012/Internal/Collide/StaticCompound/hkpShapeKeyTable.h
+  Havok/Physics2012/Internal/Collide/StaticCompound/hkpStaticCompoundShape.h
   Havok/Physics2012/Internal/Solver/Contact/hkpSimpleContactConstraintDataInfo.h
 
   Havok/Physics2012/Utilities/CharacterControl/CharacterRigidBody/hkpCharacterRigidBody.h
+  Havok/Physics2012/Utilities/Collide/ShapeUtils/ShapeKeyPath/hkpShapeKeyPath.h
   Havok/Physics2012/Utilities/Collide/ShapeUtils/ShapeScaling/hkpShapeScalingUtility.h
   Havok/Physics2012/Utilities/Dynamics/ScaleSystem/hkpSystemScalingUtility.h
   Havok/Physics2012/Utilities/Serialize/hkpPhysicsData.h

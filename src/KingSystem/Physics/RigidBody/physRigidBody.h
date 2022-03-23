@@ -59,7 +59,7 @@ public:
         _1 = 1,
         _2 = 2,
         TerrainHeightField = 3,
-        _4 = 4,
+        StaticCompoundBody = 4,
         CharacterController = 5,
         TeraMesh = 6,
     };
@@ -68,7 +68,7 @@ public:
         IsSensor = 1 << 0,
         UpdateRequested = 1 << 1,
         _4 = 1 << 2,
-        _8 = 1 << 3,
+        IsAddedToWorld = 1 << 3,
         _10 = 1 << 4,
         _20 = 1 << 5,
         _40 = 1 << 6,
@@ -101,8 +101,10 @@ public:
     };
 
     enum class MotionFlag {
-        _1 = 1 << 0,
-        _2 = 1 << 1,
+        /// Whether somebody requested that the rigid body be added to the world.
+        BodyAddRequested = 1 << 0,
+        /// Whether somebody requested that the rigid body be removed from the world.
+        BodyRemovalRequested = 1 << 1,
         Dynamic = 1 << 2,
         Keyframed = 1 << 3,
         Fixed = 1 << 4,
@@ -154,15 +156,15 @@ public:
     sead::SafeString getHkBodyName() const;
     hkpCollidable* getCollidable() const;
 
-    void x_0();
-
+    void addToWorld();
     bool isActive() const;
-
-    bool isFlag8Set() const;
-    bool isMotionFlag1Set() const;
-    bool isMotionFlag2Set() const;
-    void addOrRemoveRigidBodyToWorld();
-    bool x_6();
+    bool isAddedToWorld() const;
+    bool isAddingBodyToWorld() const;
+    bool isRemovingBodyFromWorld() const;
+    void removeFromWorld();
+    /// Returns true if the system has finished removing the body from the world and
+    /// resetting body/accessor links, false otherwise.
+    bool removeFromWorldAndResetLinks();
 
     /// Get the motion accessor if it is a RigidBodyMotionEntity. Returns nullptr otherwise.
     RigidBodyMotionEntity* getEntityMotionAccessor() const;
@@ -181,7 +183,7 @@ public:
     bool isSensorMotionFlag40000Set() const;
 
     // 0x0000007100f8d840
-    void x_8(void* arg);
+    void removeFromWorldImmediately(void* arg = nullptr);
 
     MotionType getMotionType() const;
 
@@ -511,6 +513,7 @@ public:
     [[nodiscard]] auto makeScopedLock(bool also_lock_world) {
         return ScopedLock(this, also_lock_world);
     }
+    [[nodiscard]] auto makeScopedLock() { return makeScopedLock(isAddedToWorld()); }
 
     hkpMotion* getMotion() const;
 
@@ -527,7 +530,7 @@ public:
     bool isEntityMotionFlag200On() const;
 
     // FIXME: return type
-    virtual u32 getCollisionMasks(RigidBody::CollisionMasks* masks, const u32* unk,
+    virtual u32 getCollisionMasks(RigidBody::CollisionMasks* masks, const u32* shape_key,
                                   const sead::Vector3f& contact_point) = 0;
 
 protected:
